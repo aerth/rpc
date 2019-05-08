@@ -2,16 +2,32 @@
 package rpc
 
 import (
-	logpkg "log"
-	"os"
+	logpkg "log" // imported only in this file
+	"os"         // imported only in this file
+	"time"
 
-	tgunpkg "github.com/aerth/tgun"
+	tgunpkg "github.com/aerth/tgun" // only here
 )
 
 /* dis gon be tuf */
 
-type Block interface{}
-type Tx interface{}
+// Block ....
+type Block interface {
+	Hash() Hash
+	Transactions() []Hash
+	Coinbase() string
+	Timestamp() time.Time
+}
+
+// Tx ....
+type Tx interface {
+	Hash() Hash
+}
+
+// Hash ....
+type Hash interface {
+	String() string
+} // multihash
 
 // RPCClient easy to implement ..?
 type RPCClient interface {
@@ -26,7 +42,9 @@ type RPCClient interface {
 var log = logpkg.New(os.Stderr, "", 0)
 
 // tgun may be used for easy proxied requests.
-// the http.go file contains safe aliases for use instead of importing net/http directly
-var tgun = &tgunpkg.Client{
+// use instead of importing net/http directly
+var Tgun = &tgunpkg.Client{
 	Proxy: "socks5://127.0.0.1:1080",
 }
+
+var tgun = Tgun
